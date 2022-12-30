@@ -1,5 +1,11 @@
 import express from 'express';
-import { client } from "../index.js"
+import {
+    getAllMoviesById,
+    createMovies,
+    deleteMovieById,
+    updateMovieById,
+    getAllMovies
+} from '../services/movies.service.js';
 
 const router = express.Router();
 
@@ -20,7 +26,7 @@ const router = express.Router();
 // get data from mongo db; Mongodb & node, express connection
 router.get("/:id", async function (request, response) { //get method
     const { id } = request.params;
-    const movie = await client.db('mongoTest').collection('movies').findOne({ id: id }); //accessing data from mongodb
+    const movie = await getAllMoviesById(id); //accessing data from mongodb
     movie ? response.send(movie) : response.status(404).send({ message: "movie not found" });
 });
 
@@ -29,7 +35,7 @@ router.post("/", async function (request, response) { //post method
     const data = request.body;
     console.log(data);
     //db.movies.insertMany(data)
-    const result = await client.db("mongoTest").collection("movies").insertMany(data);
+    const result = await createMovies(data);
     response.send(result);
 });
 
@@ -43,9 +49,7 @@ router.post("/", async function (request, response) { //post method
 //Delete method
 router.delete("/:id", async function (request, response) { //delete method
     const { id } = request.params;
-    const result = await client.db('mongoTest')
-        .collection('movies')
-        .deleteOne({ id: id }); //deleting data from mongodb
+    const result = await deleteMovieById(id); //deleting data from mongodb
     console.log(result);
     result.deletedCount > 0 ? response.send({ message: "movie deleted" }) :
         response.send({ message: "movie not found" });
@@ -56,9 +60,7 @@ router.put("/:id", async function (request, response) { //put method
     //db.movies.updateOne({id:'99}, {$set:{rating:9}})
     const { id } = request.params;
     const data = request.body;
-    const result = await client.db('mongoTest')
-        .collection('movies')
-        .updateOne({ id: id }, { $set: data }); //updating data from mongodb
+    const result = await updateMovieById(id, data); //updating data from mongodb
     console.log(result);
     response.send(result);
 });
@@ -68,11 +70,10 @@ router.get("/", async function (request, response) { //get method
     if (request.query.rating) {
         request.query.rating = +request.query.rating;
     }
-    const movies = await client.db("mongoTest")
-        .collection("movies")
-        .find(request.query)
-        .toArray(); //toarray returns all data instead of cursor-paginated data
+    const movies = await getAllMovies(request); //toarray returns all data instead of cursor-paginated data
     response.send(movies);
 });
 
 export default router;
+
+
