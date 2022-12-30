@@ -2,6 +2,7 @@ Installation guide;
 https://ragavkumarv.com/blog/setup-express/#introduction
 
 deployment of node - https://railway.app/
+deploy in vercel.com
 
 const movies = [
     {
