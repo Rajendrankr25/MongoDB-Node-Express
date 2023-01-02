@@ -4,6 +4,9 @@ https://ragavkumarv.com/blog/setup-express/#introduction
 deployment of node - https://railway.app/
 deploy in vercel.com
 
+Hash function package - https://www.npmjs.com/package/bcrypt
+JWT - https://www.npmjs.com/package/jsonwebtoken
+
 const movies = [
     {
         "id": "99",
