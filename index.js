@@ -1,9 +1,10 @@
 //const express = require("express"); // third party package import
-import express from 'express'; // latest export method
+import express, { request, response } from 'express'; // latest export method
 import { MongoClient } from 'mongodb';
 import * as dotenv from 'dotenv';
 import movieRouter from "./routes/movies.route.js" //importing routes
 import userRouter from "./routes/user.route.js"
+import cors from "cors";
 dotenv.config()
 
 const app = express(); // calling the express package
@@ -20,6 +21,7 @@ console.log('mongo is connected');
 
 //declare conversion - converts json data to js object - app. will apply of all api requests
 app.use(express.json());
+app.use(cors());
 
 app.get("/", function (request, response) { //get method
     response.send("This is the home page 😍😍😍😍");
@@ -27,6 +29,29 @@ app.get("/", function (request, response) { //get method
 
 app.use("/movies", movieRouter);
 app.use("/user", userRouter);
+
+// get mobiles
+
+app.get("/mobiles", async (request, response) => {
+    const mobiles = await client.db("mongoTest")
+        .collection('mobiles')
+        .find({})
+        .toArray();
+
+    response.send(mobiles);
+});
+
+// post mobiles
+
+app.post("/mobiles", async (request, response) => {
+    const data = request.body;
+    const result = await client.db('mongoTest')
+        .collection('mobiles').
+        insertMany(data);
+
+    response.send(result);
+})
+
 
 app.listen(PORT, () => console.log(`The server started in: ${PORT} ✨✨`));
 

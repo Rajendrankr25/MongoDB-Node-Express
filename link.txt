@@ -7,6 +7,8 @@ deploy in vercel.com
 Hash function package - https://www.npmjs.com/package/bcrypt
 JWT - https://www.npmjs.com/package/jsonwebtoken
 
+CORS - https://www.npmjs.com/package/cors
+
 const movies = [
     {
         "id": "99",
