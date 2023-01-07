@@ -41,7 +41,11 @@ router.post("/login", async function (request, response) {
 
         if (isPasswordCheck) {
             const token = jwt.sign({ id: userFromDB._id }, process.env.SECRET_KEY);
-            response.send({ message: "Successful Login!!!", token })
+            response.send({
+                message: "Successful Login!!!",
+                token: token,
+                roleid: userFromDB.roleid
+            })
         } else {
             response.status(401).send({ message: "Invalid Credentials" });
         }

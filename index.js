@@ -1,10 +1,11 @@
 //const express = require("express"); // third party package import
 import express, { request, response } from 'express'; // latest export method
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import * as dotenv from 'dotenv';
 import movieRouter from "./routes/movies.route.js" //importing routes
 import userRouter from "./routes/user.route.js"
 import cors from "cors";
+import { auth } from "./middleware/auth.js"
 dotenv.config()
 
 const app = express(); // calling the express package
@@ -32,7 +33,7 @@ app.use("/user", userRouter);
 
 // get mobiles
 
-app.get("/mobiles", async (request, response) => {
+app.get("/mobiles", auth, async (request, response) => {
     const mobiles = await client.db("mongoTest")
         .collection('mobiles')
         .find({})
@@ -52,6 +53,31 @@ app.post("/mobiles", async (request, response) => {
     response.send(result);
 })
 
+//delete mobiles
+
+const ROLE_ID = {
+    ADMIN: "0",
+    NORMAL_USER: "1"
+}
+
+app.delete("/mobiles/:id", auth, async function (request, response) { //delete method
+    const { id } = request.params;
+    const { roleid } = request;
+
+    if (roleid === ROLE_ID.ADMIN) {
+        const result = await client.db("mongoTest")
+            .collection("mobiles")
+            .deleteOne({ _id: ObjectId(id) });
+
+        console.log(result);
+        result.deletedCount > 0 ? response.send({ message: "mobile deleted" }) :
+            response.send({ message: "mobile not found" });
+    } else {
+        response.status(401).send({ message: "Unauthorized" });
+    }
+
+
+});
 
 app.listen(PORT, () => console.log(`The server started in: ${PORT} ✨✨`));
 
