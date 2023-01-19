@@ -6,6 +6,7 @@ import movieRouter from "./routes/movies.route.js" //importing routes
 import userRouter from "./routes/user.route.js"
 import cors from "cors";
 import { auth } from "./middleware/auth.js"
+import nodemailer from "nodemailer";
 dotenv.config()
 
 const app = express(); // calling the express package
@@ -83,3 +84,37 @@ app.listen(PORT, () => console.log(`The server started in: ${PORT} ✨✨`));
 
 
 export { client }; //exporting client to routes
+
+//forget password option mail
+
+// async..await is not allowed in global scope, must use a wrapper
+async function main() {
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing
+    let testAccount = await nodemailer.createTestAccount();
+
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gamil.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.NODE_MAILER_USER, // generated ethereal user
+            pass: process.env.NODE_MAILER_PASSWORD, // generated ethereal password
+        },
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"Rajendran Ramasamy" <rajendrankr25@gmail.com>', // sender address
+        to: "rskgames25@gmail.com", // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Hello world?", // plain text body
+        html: "<b>Hello world?</b>", // html body
+    });
+
+    console.log("Message sent: %s", info.messageId);
+}
+
+main().catch(console.error);
